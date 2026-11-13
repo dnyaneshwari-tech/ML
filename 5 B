@@ -1,0 +1,42 @@
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression, Lasso
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+
+df = pd.read_csv(r"C:\Users\Dell\Downloads\housing.csv")
+
+df['total_bedrooms'] = df['total_bedrooms'].fillna(df['total_bedrooms'].median())
+
+X = df.drop(['median_house_value', 'ocean_proximity'], axis=1)
+y = df['median_house_value']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+linear = LinearRegression()
+lasso = Lasso(alpha=0.2, max_iter=100000)
+
+linear.fit(X_train, y_train)
+lasso.fit(X_train, y_train)
+
+lin_train_pred = linear.predict(X_train)
+lin_test_pred = linear.predict(X_test)
+
+lasso_train_pred = lasso.predict(X_train)
+lasso_test_pred = lasso.predict(X_test)
+
+print("Linear Regression")
+print("Training MSE:", round(mean_squared_error(y_train, lin_train_pred), 2))
+print("Testing MSE:", round(mean_squared_error(y_test, lin_test_pred), 2))
+print("Testing R2:", round(r2_score(y_test, lin_test_pred), 2))
+
+print("\nLasso Regression")
+print("Training MSE:", round(mean_squared_error(y_train, lasso_train_pred), 2))
+print("Testing MSE:", round(mean_squared_error(y_test, lasso_test_pred), 2))
+print("Testing R2:", round(r2_score(y_test, lasso_test_pred), 2))
