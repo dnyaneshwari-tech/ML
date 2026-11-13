@@ -1,0 +1,22 @@
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
+from sklearn.datasets import load_iris
+
+data = load_iris()
+X = data.data
+
+X = StandardScaler().fit_transform(X)
+
+model = DBSCAN(eps=0.8, min_samples=5)
+labels = model.fit_predict(X)
+
+print('Cluster Labels : ', labels)
+print('Number of clusters :', len(set(labels)) - (1 if -1 in labels else 0))
+print('Noise points :', list(labels).count(-1))
+
+plt.scatter(X[:,0], X[:,1], c=labels)
+plt.xlabel('sepal length')
+plt.ylabel('sepal width')
+plt.title('DBSCAN clustering')
+plt.show()
