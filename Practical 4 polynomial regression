@@ -1,14 +1,17 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-from sklearn.datasets import load_diabetes
 
-data = load_diabetes()
-X = data.data[:, [2]]
-y = data.target
+df = pd.read_csv(r"C:\Users\Dell\Downloads\housing.csv")
+
+df['total_bedrooms'] = df['total_bedrooms'].fillna(df['total_bedrooms'].median())
+
+X = df[['median_income']]
+y = df['median_house_value']
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
@@ -35,8 +38,8 @@ for degree in (1, 2, 3, 4):
 
     plt.plot(X_plot, y_plot, label="Degree " + str(degree))
     plt.scatter(X_test, y_test, label="Actual data")
-    plt.xlabel("BMI")
-    plt.ylabel("Disease progression")
+    plt.xlabel("Median Income")
+    plt.ylabel("Median House Value")
     plt.title("Polynomial complexity for different degrees")
     plt.legend()
     plt.show()
