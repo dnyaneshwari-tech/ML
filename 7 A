@@ -1,0 +1,32 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+
+df = pd.read_csv(r"C:\Users\Dell\Downloads\housing.csv")
+
+df['total_bedrooms'] = df['total_bedrooms'].fillna(df['total_bedrooms'].median())
+
+X = df.drop(['median_house_value', 'ocean_proximity'], axis=1)
+y = (df['median_house_value'] > df['median_house_value'].median()).astype(int)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = SVC(kernel='linear')
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("Kernel: linear")
+print("Accuracy Score:", accuracy_score(y_test, y_pred))
+print("Precision Score:", precision_score(y_test, y_pred))
+print("Recall Score:", recall_score(y_test, y_pred))
+print("F1 Score:", f1_score(y_test, y_pred))
